@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-// @JsonRootName("nomeDesejado") -> Muda o nome da entidade (visível em retornos XML)
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
