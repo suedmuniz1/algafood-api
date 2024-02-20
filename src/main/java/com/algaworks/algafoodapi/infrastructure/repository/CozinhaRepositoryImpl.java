@@ -2,6 +2,7 @@ package com.algaworks.algafoodapi.infrastructure.repository;
 
 import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,7 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
 
     @Transactional
     @Override
-    public void remover(Cozinha cozinha) {
+    public void remover(Long id) {
         // precisa fazer essa busca por ID e associar a variável cozinha
         // a cozinha que veio por parâmetro não é gerenciada pelo JPA (ela é apenas uma
         // instância), e por esse motivo
@@ -49,7 +50,12 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
         // Já atribuindo o resultado de buscar a cozinha, como buscar é do JPA (find), a
         // instancia retornada é uma instância gerenciada pelo JPA
 
-        cozinha = buscar(cozinha.getId());
+        Cozinha cozinha = buscar(id);
+
+        if (cozinha == null) {
+            throw new EmptyResultDataAccessException(1);
+        }
+
         manager.remove(cozinha);
     }
 
