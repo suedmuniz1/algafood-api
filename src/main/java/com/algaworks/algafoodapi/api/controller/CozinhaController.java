@@ -1,11 +1,11 @@
 package com.algaworks.algafoodapi.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,41 +32,18 @@ public class CozinhaController {
     @Autowired
     private CadastroCozinhaService cadastroCozinha;
 
-    @GetMapping // (produces = MediaType.APPLICATION_JSON_VALUE) -> setar o mediaType retornado
+    @GetMapping
     public ResponseEntity<List<Cozinha>> listar() {
-        return ResponseEntity.ok(cozinhaRepository.listar());
+        return ResponseEntity.ok(cozinhaRepository.findAll());
     }
 
-    // @ResponseStatus(HttpStatus.CREATED) - Exemplo de como usar o @ResponseStatus
-    // para mudar o código de status da request
     @GetMapping("{cozinhaId}")
-    // o @PathVariable também aceita o bind como parâmetro. Ex.:
-    // @PathVariable("cozinhaId") Long id
     public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-        /*
-         * - EXEMPLO DE COMO RETORNAR STATUS HTTP COM BODY
-         * return ResponseEntity.status(HttpStatus.OK).body(cozinha);
-         * 
-         * - ATALHO PARA O EXEMPLO ACIMA
-         * return ResponseEntity.ok(cozinha); // Atalho para o exemplo acima
-         * 
-         * - EXEMPLO DE RETORNO COM HEADERS (NO POSTMAN, LEMBRAR DE DESATIVAR A OPÇÃO
-         * "automatically follow redirect")
-         * 
-         * HttpHeaders headers = new HttpHeaders();
-         * headers.add(HttpHeaders.LOCATION, "http://localhost:8080/cozinhas");
-         * 
-         * return ResponseEntity
-         * .status(HttpStatus.FOUND)
-         * .headers(headers)
-         * .build();
-         * 
-         */
 
-        Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
+        Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
 
-        if (cozinha != null) {
-            return ResponseEntity.ok(cozinha);
+        if (cozinha.isPresent()) {
+            return ResponseEntity.ok(cozinha.get());
         }
 
         return ResponseEntity.notFound().build();
@@ -79,21 +56,22 @@ public class CozinhaController {
     }
 
     @PutMapping("{cozinhaId}")
-    public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha) {
-        Cozinha cozinhaAtual = cozinhaRepository.buscar(cozinhaId);
+    public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId,
+            @RequestBody Cozinha cozinha) {
+        Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(cozinhaId);
 
-        if (cozinhaAtual == null || cozinha == null) {
-            return ResponseEntity.notFound().build();
-        } else {
-            BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
+        if (cozinhaAtual.isPresent()) {
+            BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id");
 
-            cozinhaAtual = cadastroCozinha.salvar(cozinhaAtual);
-            return ResponseEntity.ok(cozinhaAtual);
+            Cozinha cozinhaSalva = cadastroCozinha.salvar(cozinhaAtual.get());
+            return ResponseEntity.ok(cozinhaSalva);
         }
+
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("{cozinhaId}")
-    public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) {
+    public ResponseEntity<?> remover(@PathVariable Long cozinhaId) {
         try {
             cadastroCozinha.excluir(cozinhaId);
 
@@ -102,7 +80,7 @@ public class CozinhaController {
         } catch (EntidadeNaoEncontradaException e) {
             return ResponseEntity.notFound().build();
         } catch (EntidadeEmUsoException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
