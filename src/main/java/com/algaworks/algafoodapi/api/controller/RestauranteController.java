@@ -1,6 +1,7 @@
 package com.algaworks.algafoodapi.api.controller;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +25,7 @@ import com.algaworks.algafoodapi.domain.model.Restaurante;
 import com.algaworks.algafoodapi.domain.repository.RestauranteRepository;
 import com.algaworks.algafoodapi.domain.service.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -38,6 +40,32 @@ public class RestauranteController {
     @GetMapping
     public ResponseEntity<List<Restaurante>> listar() {
         return ResponseEntity.ok(restauranteRepository.findAll());
+    }
+
+    @GetMapping("/first-by-nome/{nome}")
+    public Object recuperarPrimeiroResultadoPorNome(@PathVariable String nome) {
+        return restauranteRepository.findFirstRestauranteByNomeContaining(nome);
+    }
+
+    @GetMapping("/exists")
+    public boolean checarSeExistePorNome(@RequestParam String nome) {
+        return restauranteRepository.existsByNome(nome);
+    }
+
+    @GetMapping("/count-by-cozinha/{cozinhaId}")
+    public int contarPorCozinhaId(@PathVariable Long cozinhaId) {
+        return restauranteRepository.countByCozinhaId(cozinhaId);
+    }
+
+    @GetMapping("/get-by-nome-and-cozinha-id")
+    public List<Restaurante> consultarPorNomeECozinhaId(String nome, Long cozinhaId) {
+        return restauranteRepository.consultarPorNomeECozinhaId(nome, cozinhaId);
+    }
+
+    @GetMapping("/por-nome-e-frete")
+    public List<Restaurante> getMethodName(@RequestParam String nome, @RequestParam BigDecimal taxaFreteInicial,
+            @RequestParam BigDecimal taxaFreteFinal) {
+        return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
     }
 
     @GetMapping("/{restauranteId}")

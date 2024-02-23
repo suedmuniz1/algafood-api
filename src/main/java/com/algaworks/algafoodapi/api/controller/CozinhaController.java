@@ -1,5 +1,6 @@
 package com.algaworks.algafoodapi.api.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +22,10 @@ import com.algaworks.algafoodapi.domain.exception.EntidadeNaoEncontradaException
 import com.algaworks.algafoodapi.domain.model.Cozinha;
 import com.algaworks.algafoodapi.domain.repository.CozinhaRepository;
 import com.algaworks.algafoodapi.domain.service.CadastroCozinhaService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping(value = "cozinhas")
+@RequestMapping(value = "/cozinhas")
 public class CozinhaController {
 
     @Autowired
@@ -37,7 +39,28 @@ public class CozinhaController {
         return ResponseEntity.ok(cozinhaRepository.findAll());
     }
 
-    @GetMapping("{cozinhaId}")
+    @GetMapping("/get-by-nome")
+    public List<Cozinha> listarPorNome(@RequestParam String nome) {
+        return cozinhaRepository.findByNome(nome);
+    }
+
+    @GetMapping("/get-by-nome/containing/{nome}")
+    public List<Cozinha> listarPorNomeContendo(@PathVariable String nome) {
+        return cozinhaRepository.findTodasAsCozinhasByNomeContaining(nome);
+    }
+
+    @GetMapping("/get-unique-by-nome/{nomeDaCozinha}")
+    public Object recuperarUnicaPorNome(@PathVariable("nomeDaCozinha") String nome) {
+        Optional<Cozinha> cozinha = cozinhaRepository.findUnicaCozinhaByNome(nome);
+
+        if (cozinha.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        return cozinha.get();
+    }
+
+    @GetMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
 
         Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
@@ -55,7 +78,7 @@ public class CozinhaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cozinhaSalva);
     }
 
-    @PutMapping("{cozinhaId}")
+    @PutMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId,
             @RequestBody Cozinha cozinha) {
         Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(cozinhaId);
@@ -70,7 +93,7 @@ public class CozinhaController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("{cozinhaId}")
+    @DeleteMapping("/{cozinhaId}")
     public ResponseEntity<?> remover(@PathVariable Long cozinhaId) {
         try {
             cadastroCozinha.excluir(cozinhaId);
