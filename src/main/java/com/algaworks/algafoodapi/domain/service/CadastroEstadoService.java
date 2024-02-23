@@ -21,11 +21,13 @@ public class CadastroEstadoService {
     }
 
     public void excluir(Long estadoId) {
-        try {
-            estadoRepository.deleteById(estadoId);
-        } catch (EmptyResultDataAccessException e) {
+        if (estadoRepository.findById(estadoId).isEmpty()) {
             throw new EntidadeNaoEncontradaException(
                     String.format("Não existe um cadastro de estado com o código %d.", estadoId));
+        }
+
+        try {
+            estadoRepository.deleteById(estadoId);
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(
                     String.format("Estado de código %d não pode ser removido, pois está em uso.", estadoId));
