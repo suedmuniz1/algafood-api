@@ -1,6 +1,7 @@
 package com.algaworks.algafoodapi.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import com.algaworks.algafoodapi.domain.repository.EstadoRepository;
 import com.algaworks.algafoodapi.domain.service.CadastroEstadoService;
 
 @RestController
-@RequestMapping(value = "estados", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+@RequestMapping(value = "/estados", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 public class EstadoController {
 
     @Autowired
@@ -34,30 +35,30 @@ public class EstadoController {
 
     @GetMapping
     public List<Estado> listar() {
-        return estadoRepository.listar();
+        return estadoRepository.findAll();
     }
 
     @PostMapping
     public ResponseEntity<Estado> adicionar(@RequestBody Estado estado) {
-        estado = cadastroEstado.salvar(estado);
+        estado = estadoRepository.save(estado);
         return ResponseEntity.status(HttpStatus.CREATED).body(estado);
     }
 
-    @PutMapping("{estadoId}")
+    @PutMapping("/{estadoId}")
     public ResponseEntity<Estado> atualizar(@PathVariable Long estadoId, @RequestBody Estado estado) {
-        Estado estadoAtual = estadoRepository.buscar(estadoId);
+        Optional<Estado> estadoAtual = estadoRepository.findById(estadoId);
 
-        if (estadoAtual == null || estado == null) {
+        if (estadoAtual.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        BeanUtils.copyProperties(estado, estadoAtual, "id");
+        BeanUtils.copyProperties(estado, estadoAtual.get(), "id");
 
-        estadoAtual = cadastroEstado.salvar(estadoAtual);
-        return ResponseEntity.ok(estadoAtual);
+        Estado estadoSalvo = cadastroEstado.salvar(estadoAtual.get());
+        return ResponseEntity.ok(estadoSalvo);
     }
 
-    @DeleteMapping("{estadoId}")
+    @DeleteMapping("/{estadoId}")
     public ResponseEntity<?> remover(@PathVariable Long estadoId) {
         try {
             cadastroEstado.excluir(estadoId);
