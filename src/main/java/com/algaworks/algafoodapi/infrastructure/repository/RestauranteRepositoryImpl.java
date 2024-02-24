@@ -3,6 +3,10 @@ package com.algaworks.algafoodapi.infrastructure.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.algaworks.algafoodapi.domain.repository.RestauranteRepositoryQueries;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,20 +16,21 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 @Repository
-public class RestauranteRepositoryImpl {
+public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 
     @PersistenceContext
     private EntityManager manager;
 
-    public List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+    @Override
+    public List<Restaurante> consultar(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
 
-        var jpql = "from Restaurante where nome like :nome and taxaFrete between :taxaFreteInicial and :taxaFreteFinal";
+        CriteriaQuery<Restaurante> criteria = builder.createQuery(Restaurante.class);
+        criteria.from(Restaurante.class);
 
-        return manager.createQuery(jpql, Restaurante.class)
-                .setParameter("nome", "%" + nome + "%")
-                .setParameter("taxaFreteInicial", taxaFreteInicial)
-                .setParameter("taxaFreteFinal", taxaFreteFinal)
-                .getResultList();
+        TypedQuery<Restaurante> query = manager.createQuery(criteria);
+
+        return query.getResultList();
     }
 
 }

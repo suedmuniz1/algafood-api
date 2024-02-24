@@ -65,18 +65,14 @@ public class RestauranteController {
     @GetMapping("/por-nome-e-frete")
     public List<Restaurante> getMethodName(@RequestParam String nome, @RequestParam BigDecimal taxaFreteInicial,
             @RequestParam BigDecimal taxaFreteFinal) {
-        return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
+        return restauranteRepository.consultar(nome, taxaFreteInicial, taxaFreteFinal);
     }
 
     @GetMapping("/{restauranteId}")
     public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
         Optional<Restaurante> restaurante = restauranteRepository.findById(restauranteId);
 
-        if (restaurante.isPresent()) {
-            return ResponseEntity.ok(restaurante.get());
-        }
-
-        return ResponseEntity.notFound().build();
+        return restaurante.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping

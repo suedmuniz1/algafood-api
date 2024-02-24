@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RestauranteRepository extends JpaRepository<Restaurante, Long> {
+public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries {
 
     /* ------ CONSULTAS POR KEYWORDS NA DEFINIÇÃO DO MÉTODO ---------- */
     /* Consultas simples que dá pra usar as keywords */
@@ -41,11 +41,4 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long> 
      * 
      */
 
-    /*----- CONSULTAS CRIADAS VIA IMPLEMENTAÇÃO DA INTERFACE (IMPL) ------*/
-    /* Consultas mais complexas, que precisam de jpql + lógica em Java */
-    /*
-     * Criando a definição na interface, e a implementação no impl, o Spring já
-     * consegue identificar que a definição é a impl
-     */
-    List<Restaurante> find(String nome, BigDecimal taxaFreteicial, BigDecimal taxaFreteFinal);
 }
