@@ -1,31 +1,25 @@
 package com.algaworks.algafoodapi.api.controller;
 
+import com.algaworks.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafoodapi.domain.model.Restaurante;
+import com.algaworks.algafoodapi.domain.repository.RestauranteRepository;
+import com.algaworks.algafoodapi.domain.service.CadastroRestauranteService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.*;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.algaworks.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import com.algaworks.algafoodapi.domain.model.Restaurante;
-import com.algaworks.algafoodapi.domain.repository.RestauranteRepository;
-import com.algaworks.algafoodapi.domain.service.CadastroRestauranteService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.RequestParam;
+import static com.algaworks.algafoodapi.infrastructure.repository.spec.RestauranteSpecs.comFreteGratis;
+import static com.algaworks.algafoodapi.infrastructure.repository.spec.RestauranteSpecs.comNomeSemelhante;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -63,9 +57,14 @@ public class RestauranteController {
     }
 
     @GetMapping("/por-nome-e-frete")
-    public List<Restaurante> getMethodName(@RequestParam String nome, @RequestParam BigDecimal taxaFreteInicial,
-            @RequestParam BigDecimal taxaFreteFinal) {
+    public List<Restaurante> getMethodName(@RequestParam(required = false) String nome, @RequestParam(required = false) BigDecimal taxaFreteInicial,
+            @RequestParam(required = false) BigDecimal taxaFreteFinal) {
         return restauranteRepository.consultar(nome, taxaFreteInicial, taxaFreteFinal);
+    }
+
+    @GetMapping("/com-frete-gratis")
+    public List<Restaurante> restaurantesComFreteGratis(@RequestParam("nome") String nome) {
+        return restauranteRepository.findAll(comFreteGratis().and(comNomeSemelhante(nome)));
     }
 
     @GetMapping("/{restauranteId}")
@@ -91,7 +90,7 @@ public class RestauranteController {
             @RequestBody(required = true) Restaurante restaurante) {
         Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
 
-        if (!restauranteAtual.isPresent()) {
+        if (restauranteAtual.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
             try {
@@ -109,7 +108,7 @@ public class RestauranteController {
             @RequestBody Map<String, Object> restaurante) {
         Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
 
-        if (!restauranteAtual.isPresent()) {
+        if (restauranteAtual.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
