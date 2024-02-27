@@ -64,7 +64,12 @@ public class RestauranteController {
 
     @GetMapping("/com-frete-gratis")
     public List<Restaurante> restaurantesComFreteGratis(@RequestParam("nome") String nome) {
-        return restauranteRepository.findAll(comFreteGratis().and(comNomeSemelhante(nome)));
+        return restauranteRepository.findComFreteGratis(nome);
+    }
+
+    @GetMapping("/primeiro")
+    public Optional<Restaurante> primeiroRestaurante() {
+        return restauranteRepository.buscarPrimeiro();
     }
 
     @GetMapping("/{restauranteId}")
