@@ -60,16 +60,18 @@ public class CozinhaController {
         return cozinha.get();
     }
 
+    @GetMapping("/primeira")
+    public Optional<Cozinha> primeiraCozinha() {
+        return cozinhaRepository.buscarPrimeiro();
+    }
+
     @GetMapping("/{cozinhaId}")
     public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
 
         Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
 
-        if (cozinha.isPresent()) {
-            return ResponseEntity.ok(cozinha.get());
-        }
+        return cozinha.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
-        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
