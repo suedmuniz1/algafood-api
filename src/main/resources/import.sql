@@ -21,3 +21,5 @@ insert into cidade (nome, estado_id) values ('Belo Horizonte', 1);
 insert into cidade (nome, estado_id) values ('São Paulo', 2);
 insert into cidade (nome, estado_id) values ('Juazeiro do Norte', 3);
 insert into cidade (nome, estado_id) values ('Crato', 3);
+
+insert into restaurante_forma_pagamento (restaurante_id, forma_pagamento_id) values (1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3);
