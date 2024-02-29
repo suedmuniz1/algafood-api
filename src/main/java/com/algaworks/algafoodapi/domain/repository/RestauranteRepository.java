@@ -1,16 +1,17 @@
 package com.algaworks.algafoodapi.domain.repository;
 
-import com.algaworks.algafoodapi.domain.model.Restaurante;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.algaworks.algafoodapi.domain.model.Restaurante;
 
 @Repository
-public interface RestauranteRepository extends CustomJpaRepository<Restaurante, Long>, RestauranteRepositoryQueries, JpaSpecificationExecutor<Restaurante> {
+public interface RestauranteRepository extends CustomJpaRepository<Restaurante, Long>, RestauranteRepositoryQueries,
+        JpaSpecificationExecutor<Restaurante> {
 
     /* ------ CONSULTAS POR KEYWORDS NA DEFINIÇÃO DO MÉTODO ---------- */
     /* Consultas simples que dá pra usar as keywords */
@@ -37,7 +38,7 @@ public interface RestauranteRepository extends CustomJpaRepository<Restaurante, 
     List<Restaurante> consultarPorNomeECozinhaId(String nome, @Param("id") Long cozinhaId);
     /*
      * Para melhorar a legibilidade para queries muito extensas, criar o arquivo
-     * orm.xml e colocar as queries lá usando "names-query"
+     * orm.xml e colocar as queries lá usando "named-query"
      * 
      */
 
