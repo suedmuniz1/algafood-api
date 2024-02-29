@@ -57,7 +57,8 @@ public class RestauranteController {
     }
 
     @GetMapping("/por-nome-e-frete")
-    public List<Restaurante> getMethodName(@RequestParam(required = false) String nome, @RequestParam(required = false) BigDecimal taxaFreteInicial,
+    public List<Restaurante> getMethodName(@RequestParam(required = false) String nome,
+            @RequestParam(required = false) BigDecimal taxaFreteInicial,
             @RequestParam(required = false) BigDecimal taxaFreteFinal) {
         return restauranteRepository.consultar(nome, taxaFreteInicial, taxaFreteFinal);
     }
@@ -99,7 +100,7 @@ public class RestauranteController {
             return ResponseEntity.notFound().build();
         } else {
             try {
-                BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id");
+                BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento");
 
                 return ResponseEntity.ok(cadastroRestaurante.salvar(restauranteAtual.get()));
             } catch (EntidadeNaoEncontradaException e) {
