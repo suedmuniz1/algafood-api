@@ -2,6 +2,8 @@ package com.algaworks.algafoodapi.domain.model;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -25,8 +27,15 @@ public class Produto {
     private BigDecimal preco;
     private boolean ativo;
 
+    @JsonIgnore // Para evitar loop infinito de serialização ao gerar o JSON
     @ManyToOne
     @JoinColumn(name = "restaurante_id")
+    /*
+     * - Consultar a tabela de restaurante;
+     * - (Para cada Produto) Achar o restaurante que tenha o ID igual ao
+     * restaurante_id registrado no produto;
+     * - Atribuir o objeto encontrado ao produto como "restaurante" no JSON.
+     */
     private Restaurante restaurante;
 
 }

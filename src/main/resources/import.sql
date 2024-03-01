@@ -25,4 +25,5 @@ insert into permissao (nome, descricao) values ('EDITAR_COZINHAS', 'Permite edit
 
 insert into restaurante_forma_pagamento (restaurante_id, forma_pagamento_id) values (1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3);
 
-insert into produto (nome, descricao, preco, ativo, restaurante_id) values ("Porco com molho agridoce", "Deliciosa carne suiána ao molho especial", 78.90, true, 1);
+insert into produto (nome, descricao, preco, ativo, restaurante_id) values ("Porco com molho agridoce", "Deliciosa carne suiána ao molho especial", 78.90, false, 1);
+insert into produto (nome, descricao, preco, ativo, restaurante_id) values ("Camarão tailandês", "16 camarões grandes ao molho picante", 110, true, 1);

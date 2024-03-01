@@ -59,4 +59,14 @@ public class Restaurante {
                                                                           // (forma_pagamento)
     )
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurante")
+    /*
+     * - Consultar a tabela de produtos;
+     * - (Para cada restaurante) Achar os produtos que tenham o atributo
+     * restaurante, e que o ID do restaurante seja o mesmo;
+     * - Atribuir cada objeto encontrado a lista de "produtos" no JSON.
+     */
+    private List<Produto> produtos = new ArrayList<>();
 }
