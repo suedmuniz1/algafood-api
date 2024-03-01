@@ -36,3 +36,8 @@ insert into grupo_permissao (grupo_id, permissao_id) values (3, 1);
 
 insert into produto (nome, descricao, preco, ativo, restaurante_id) values ("Porco com molho agridoce", "Deliciosa carne suiána ao molho especial", 78.90, false, 1);
 insert into produto (nome, descricao, preco, ativo, restaurante_id) values ("Camarão tailandês", "16 camarões grandes ao molho picante", 110, true, 1);
+
+insert into usuario (nome, email, senha, data_cadastro) values ('Joaquim', 'p0kZ7@example.com', '123', utc_timestamp);
+insert into usuario (nome, email, senha, data_cadastro) values ('Sued', 'p0k34@example.com', '456', utc_timestamp);
+
+insert into usuario_grupo (usuario_id, grupo_id) values (1, 1), (1, 2), (2, 2);
