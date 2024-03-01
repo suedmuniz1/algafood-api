@@ -19,11 +19,20 @@ insert into forma_pagamento (descricao) values ('Crédito');
 insert into forma_pagamento (descricao) values ('Débito');
 insert into forma_pagamento (descricao) values ('Dinheiro');
 
+insert into restaurante_forma_pagamento (restaurante_id, forma_pagamento_id) values (1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3);
+
 insert into permissao (nome, descricao) values ('CONSULTAR_COZINHAS', 'Permite consultar cozinhas');
 insert into permissao (nome, descricao) values ('EDITAR_COZINHAS', 'Permite editar cozinhas');
 
+insert into grupo (nome) values ('Gerente');
+insert into grupo (nome) values ('Vendedor');
+insert into grupo (nome) values ('Cadastrador');
 
-insert into restaurante_forma_pagamento (restaurante_id, forma_pagamento_id) values (1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 3);
+insert into grupo_permissao (grupo_id, permissao_id) values (1, 1);
+insert into grupo_permissao (grupo_id, permissao_id) values (1, 2);
+insert into grupo_permissao (grupo_id, permissao_id) values (2, 1);
+insert into grupo_permissao (grupo_id, permissao_id) values (2, 2);
+insert into grupo_permissao (grupo_id, permissao_id) values (3, 1);
 
 insert into produto (nome, descricao, preco, ativo, restaurante_id) values ("Porco com molho agridoce", "Deliciosa carne suiána ao molho especial", 78.90, false, 1);
 insert into produto (nome, descricao, preco, ativo, restaurante_id) values ("Camarão tailandês", "16 camarões grandes ao molho picante", 110, true, 1);
